@@ -4,15 +4,18 @@
  */
 package vista.Especialidades;
 
+
 import controlador.EspecialidadControlador;
-import controlador.MedicoControlador;
 import javax.swing.JOptionPane;
+import modelo.EspecialidadModelo;
 
 /**
  *
- * @author rb940
+ * @author rb940    
  */
 public class IngresarEspecialidad extends javax.swing.JInternalFrame {
+    EspecialidadControlador especialidadControlador =  EspecialidadControlador.getInstancia();
+            
 
     /**
      * Creates new form IngresarEspecialidad
@@ -32,14 +35,10 @@ public class IngresarEspecialidad extends javax.swing.JInternalFrame {
 
         jLabel1 = new javax.swing.JLabel();
         txt_nombre = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        txt_id = new javax.swing.JTextField();
         btn_guardar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
 
-        jLabel1.setText("Ingrese la Especialidad");
-
-        jLabel3.setText("ID");
+        jLabel1.setText("Ingrese el nombre de la Especialidad");
 
         btn_guardar.setText("Guardar");
         btn_guardar.addActionListener(new java.awt.event.ActionListener() {
@@ -57,59 +56,38 @@ public class IngresarEspecialidad extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1)
-                            .addComponent(txt_nombre)
-                            .addComponent(jLabel3)
-                            .addComponent(txt_id, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(137, 137, 137)
-                        .addComponent(btn_guardar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 144, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(116, 116, 116))
+                        .addComponent(btn_guardar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(143, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel4)
-                .addGap(28, 28, 28)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(42, 42, 42)
                 .addComponent(btn_guardar)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
-    String id = txt_id.getText();
-        String nombre = txt_nombre.getText();
-
-        // Validar campos
-        if (id.isEmpty() || nombre.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Guardar la especialidad
-        EspecialidadControlador controlador = EspecialidadControlador.getInstancia();
-        controlador.agregarEspecialidad(id, nombre);
-        JOptionPane.showMessageDialog(this, "Especialidad guardada exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-        // Limpiar campos
-        txt_id.setText("");
-        txt_nombre.setText("");
+    EspecialidadModelo em = especialidadControlador.guardar(txt_nombre.getText());
+    
+    JOptionPane.showMessageDialog(null,txt_nombre.getText()+ "INGRESADO EXITOSAMENTE");
+    txt_nombre.setText("");
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_guardarActionPerformed
 
@@ -117,9 +95,7 @@ public class IngresarEspecialidad extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_guardar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField txt_id;
     private javax.swing.JTextField txt_nombre;
     // End of variables declaration//GEN-END:variables
 }

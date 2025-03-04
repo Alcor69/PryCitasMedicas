@@ -8,44 +8,29 @@ package modelo;
  *
  * @author rb940
  */
-public class MedicoModelo {
-    private String id;
-    private String nombres;
-    private String especialidad;
+public class MedicoModelo extends PacienteModelo {
+    public EspecialidadModelo especialidadModelo;
 
-    public MedicoModelo(String id, String nombres, String especialidad) {
-        this.id = id;
-        this.nombres = nombres;
-        this.especialidad = especialidad;
+    public MedicoModelo(EspecialidadModelo especialidadModelo, String cedula, String nombres, int edad, boolean sexo) {
+        super(cedula, nombres, edad, sexo);
+        this.especialidadModelo = especialidadModelo;
     }
 
-    // Getters y Setters
-    public String getId() {
-        return id;
+    public EspecialidadModelo getEspecialidadModelo() {
+        return especialidadModelo;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setEspecialidadModelo(EspecialidadModelo especialidadModelo) {
+        this.especialidadModelo = especialidadModelo;
+    }
+    
+    public String GetEspecialidadmodelo(){
+            return this.especialidadModelo.getNombre();
     }
 
-    public String getNombres() {
-        return nombres;
-    }
+    
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
+    
+   
 
-    public String getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(String especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    @Override
-    public String toString() {
-        return nombres + " (" + especialidad + ")";
-    }
 }

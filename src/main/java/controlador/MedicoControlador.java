@@ -5,43 +5,53 @@
 package controlador;
 
 import java.util.ArrayList;
-import java.util.List;
+import modelo.EspecialidadModelo;
 import modelo.MedicoModelo;
+import modelo.PacienteModelo;
 
 /**
  *
  * @author rb940
  */
 public class MedicoControlador {
-    private List<MedicoModelo> medicos;
+    ArrayList<MedicoModelo> medicoModelos;
     private static MedicoControlador instancia;
-
-    private MedicoControlador() {
-        medicos = new ArrayList<>();
+    
+    private MedicoControlador(){
+        this.medicoModelos = new ArrayList<>();
     }
-
-    public static MedicoControlador getInstancia() {
-        if (instancia == null) {
-            instancia = new MedicoControlador();
+    public static MedicoControlador getInstancia(){
+    if(instancia== null){
+    instancia = new MedicoControlador();
+    }
+    return instancia;
+    }
+    public MedicoModelo guardar(EspecialidadModelo em , String cedula, String nombres, int edad, boolean sexo){
+        MedicoModelo mm = new MedicoModelo(em, cedula, nombres, edad, sexo);
+        medicoModelos.add(mm);
+        return mm;
+    }
+    public ArrayList<MedicoModelo> listadoCompleto(){
+       return medicoModelos;   
+    }
+    
+    public ArrayList<MedicoModelo> listadoPorEspecialidad(String n_e){
+        ArrayList<MedicoModelo> medicosPorEspecialidad = new ArrayList<>();
+        for (MedicoModelo medico : medicoModelos) {
+            if (medico.getEspecialidadModelo().getNombre().contains(n_e)) {
+                medicosPorEspecialidad.add(medico);
+            }
         }
-        return instancia;
+        return medicosPorEspecialidad;
     }
-
-    public void agregarMedico(String id, String nombres, String especialidad) {
-        MedicoModelo medico = new MedicoModelo(id, nombres, especialidad);
-        medicos.add(medico);
-    }
-
-    public List<MedicoModelo> listarMedicos() {
-        return medicos;
-    }
-
-    public MedicoModelo buscarMedicoPorId(String id) {
-        for (MedicoModelo medico : medicos) {
-            if (medico.getId().equals(id)) {
-                return medico;
+    
+    public MedicoModelo obtenerCedula(String cedula){
+        for (MedicoModelo mm : medicoModelos) {
+            if(mm.getCedula().equals(cedula)){
+            return mm;
             }
         }
         return null;
     }
+    
 }

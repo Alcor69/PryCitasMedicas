@@ -6,8 +6,6 @@ package vista;
 
 import vista.Especialidades.IngresarEspecialidad;
 import vista.Especialidades.ListadoEspecialidades;
-import vista.medicos.IngresarMedico;
-import vista.medicos.ListadoMedicos;
 import vista.pacientes.Ingresar;
 import vista.pacientes.Listado;
 import vista.turnos.IngresarTurno;
@@ -181,27 +179,25 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
     contenedor_principal.removeAll();
-    IngresarTurno it = new IngresarTurno();
-    contenedor_principal.add(it).setVisible(rootPaneCheckingEnabled);
+    contenedor_principal.add(new vista.citas.Ingresar()).setVisible(true);
     // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
     contenedor_principal.removeAll();
-    contenedor_principal.add(new NewJInternalFrame()).setVisible(true);
+    contenedor_principal.add(new vista.citas.Listado()).setVisible(true);
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
     contenedor_principal.removeAll();
-    IngresarMedico im = new IngresarMedico();
-    contenedor_principal.add(im).setVisible(true);
-        // TODO add your handling code here:
+    contenedor_principal.add(new vista.medicos.Ingresar()).setVisible(true);
+        // TODO add your handling code here:&
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
     contenedor_principal.removeAll();
-    contenedor_principal.add(new ListadoMedicos() ).setVisible(true);
+    contenedor_principal.add(new vista.medicos.Listado()).setVisible(true);
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 

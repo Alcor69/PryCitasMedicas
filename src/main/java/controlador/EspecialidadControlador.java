@@ -5,7 +5,6 @@
 package controlador;
 
 import java.util.ArrayList;
-import java.util.List;
 import modelo.EspecialidadModelo;
 
 /**
@@ -13,35 +12,41 @@ import modelo.EspecialidadModelo;
  * @author rb940
  */
 public class EspecialidadControlador {
-    private List<EspecialidadModelo> especialidades;
-    private static EspecialidadControlador instancia;
-
-    private EspecialidadControlador() {
-        especialidades = new ArrayList<>();
+    ArrayList<EspecialidadModelo> especialidadModelos;
+    public static EspecialidadControlador instancia;
+    
+    private EspecialidadControlador(){
+        this.especialidadModelos = new ArrayList<>();
     }
-
-    public static EspecialidadControlador getInstancia() {
+    
+    public static EspecialidadControlador getInstancia(){
         if (instancia == null) {
-            instancia = new EspecialidadControlador();
+            instancia=new EspecialidadControlador();        
         }
         return instancia;
     }
-
-    public void agregarEspecialidad(String id, String nombre) {
-        EspecialidadModelo especialidad = new EspecialidadModelo(id, nombre);
-        especialidades.add(especialidad);
+    
+    public EspecialidadModelo guardar(String nombre){
+        EspecialidadModelo modelo = new EspecialidadModelo(nombre);
+        especialidadModelos.add(modelo);
+        return modelo;
+        
+    
     }
 
-    public List<EspecialidadModelo> listarEspecialidades() {
-        return especialidades;
+    public ArrayList<EspecialidadModelo> listado() {
+       return especialidadModelos;
     }
-
-    public EspecialidadModelo buscarEspecialidadPorId(String id) {
-        for (EspecialidadModelo especialidad : especialidades) {
-            if (especialidad.getId().equals(id)) {
-                return especialidad;
+    
+    public EspecialidadModelo obtenerPorNombre(String nombre){
+        for (EspecialidadModelo em : especialidadModelos) {
+            if (em.getNombre().equals(nombre)) {
+                return em;
+                
             }
-        }
-        return null;
+            
+        }return null;
     }
+
+
 }

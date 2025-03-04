@@ -5,46 +5,41 @@
 package vista.Especialidades;
 
 import controlador.EspecialidadControlador;
-import controlador.MedicoControlador;
 import javax.swing.table.DefaultTableModel;
 import modelo.EspecialidadModelo;
-import modelo.MedicoModelo;
+
 
 /**
  *
  * @author rb940
  */
 public class ListadoEspecialidades extends javax.swing.JInternalFrame {
-
+ 
     /**
      * Creates new form ListadoEspecialidades
      */
-   private DefaultTableModel tableModel;
+   EspecialidadControlador ec = EspecialidadControlador.getInstancia();
+   DefaultTableModel tableModel = new DefaultTableModel();
+  
 
     public ListadoEspecialidades() {
         initComponents();
-        initTable();
-        cargarEspecialidades();
+        
+        tbl_Listado.setModel(tableModel);
+        
+        String columnas[] = {"ESPECIALIDADES"};
+        tableModel.setColumnIdentifiers(columnas);
+        
+        cargarListadoPacientes();
     }
-
-    private void initTable() {
-        tableModel = new DefaultTableModel();
-        tableModel.addColumn("ID Especialidad");
-        tableModel.addColumn("Nombre");
-        tbl_especialidades.setModel(tableModel);
-    }
-
-    private void cargarEspecialidades() {
-        EspecialidadControlador controlador = EspecialidadControlador.getInstancia();
-
-        for (EspecialidadModelo especialidad : controlador.listarEspecialidades()) {
-            Object[] fila = {
-                especialidad.getId(),
-                especialidad.getNombre()
-            };
+    private void cargarListadoPacientes(){
+    for (EspecialidadModelo em : ec.listado()){
+            Object[] fila = {em.getNombre()};
             tableModel.addRow(fila);
         }
     }
+
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -55,15 +50,32 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_medicos = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tbl_especialidades = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        txt_nombre = new javax.swing.JTextField();
+        tbl_listado = new javax.swing.JScrollPane();
+        tbl_Listado = new javax.swing.JTable();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(jTable1);
 
         jLabel1.setText("Listado de Especialistas");
 
-        tbl_medicos.setModel(new javax.swing.table.DefaultTableModel(
+        jLabel2.setText("Buscar por Nombre");
+
+        tbl_Listado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {},
                 {},
@@ -74,47 +86,39 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
 
             }
         ));
-        jScrollPane1.setViewportView(tbl_medicos);
-
-        tbl_especialidades.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane2.setViewportView(tbl_especialidades);
+        tbl_listado.setViewportView(tbl_Listado);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(tbl_listado, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
             .addGroup(layout.createSequentialGroup()
-                .addGap(127, 127, 127)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(127, 127, 127)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tbl_listado, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         pack();
@@ -123,9 +127,11 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tbl_especialidades;
-    private javax.swing.JTable tbl_medicos;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tbl_Listado;
+    private javax.swing.JScrollPane tbl_listado;
+    private javax.swing.JTextField txt_nombre;
     // End of variables declaration//GEN-END:variables
 }
