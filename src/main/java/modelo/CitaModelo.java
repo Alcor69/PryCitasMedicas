@@ -17,15 +17,19 @@ public class CitaModelo {
     public String descripcion;
     public String fecha;
     public String hora;
+    public String estado;
 
-    public CitaModelo(PacienteModelo pm, MedicoModelo mm, EspecialidadModelo em, String descripcion, String fecha, String hora) {
+    public CitaModelo(PacienteModelo pm, MedicoModelo mm, EspecialidadModelo em, String descripcion, String fecha, String hora, String estado) {
         this.pm = pm;
         this.mm = mm;
         this.em = em;
         this.descripcion = descripcion;
         this.fecha = fecha;
         this.hora = hora;
+        this.estado = estado;
     }
+
+    
 
     public PacienteModelo getPm() {
         return pm;
@@ -74,6 +78,15 @@ public class CitaModelo {
     public void setHora(String hora) {
         this.hora = hora;
     }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+    
     
     
 }
