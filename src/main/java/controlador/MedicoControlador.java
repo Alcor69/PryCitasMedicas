@@ -53,5 +53,20 @@ public class MedicoControlador {
         }
         return null;
     }
+    public void editarMedico(MedicoModelo medico) {
+        for (int i = 0; i < medicoModelos.size(); i++) {
+            MedicoModelo m = medicoModelos.get(i);
+            if (m.getCedula().equals(medico.getCedula())) {
+                medicoModelos.set(i, medico); // Actualiza el médico en la lista
+                break;
+            }
+        }
+    }
+
+    // Método para eliminar un médico
+    public void eliminarMedico(MedicoModelo medico) {
+        medicoModelos.remove(medico); // Elimina el médico de la lista
+    }
+
     
 }

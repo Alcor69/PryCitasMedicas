@@ -38,6 +38,7 @@ public class CitaControlador {
         String descripcion, 
         String fecha,
         String hora
+        
         ){
     
         CitaModelo cm = new CitaModelo(pm, mm, em, descripcion, fecha, hora, hora);//estas cagadas son argumentos
@@ -156,6 +157,19 @@ public class CitaControlador {
     }
     return citasFiltradas;
 }
-    
+    public ArrayList<PacienteModelo> obtenerPacientesNoAtendidos() {
+    ArrayList<PacienteModelo> pacientesNoAtendidos = new ArrayList<>();
+    for (CitaModelo cita : citasModelo) {
+        // Filtrar solo las citas con estado "No Atendido"
+        if ("No Atendido".equals(cita.getEstado())) {
+            // Agregar el paciente a la lista si no está ya en la lista
+            if (!pacientesNoAtendidos.contains(cita.getPm())) {
+                pacientesNoAtendidos.add(cita.getPm());
+            }
+        }
+    }
+    return pacientesNoAtendidos;
+}
+
     
 }

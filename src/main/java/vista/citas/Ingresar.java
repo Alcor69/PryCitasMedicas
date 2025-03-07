@@ -5,6 +5,8 @@ import controlador.CitaControlador;
 import controlador.EspecialidadControlador;
 import controlador.MedicoControlador;
 import controlador.PacienteControlador;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import modelo.CitaModelo;
 import modelo.EspecialidadModelo;
@@ -86,6 +88,8 @@ public class Ingresar extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         btn_guardar = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(204, 204, 255));
 
         jLabel1.setText("Seleccionar Paciente");
 
@@ -194,28 +198,64 @@ public class Ingresar extends javax.swing.JInternalFrame {
 
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
     //paciente
+    String fecha = txt_fecha.getText();
+    if (!validarFecha(fecha)) {
+        JOptionPane.showMessageDialog(this, "La fecha debe estar en formato dd/mm/aa.");
+        return;
+    }
+
+    // Validar hora
+    String hora = txt_hora.getText();
+    if (!validarHora(hora)) {
+        JOptionPane.showMessageDialog(this, "La hora debe estar en formato hh:mm.");
+        return;
+    }
+
+    // Continuar con la lógica si las validaciones pasan
+    // Paciente
     String nombrePaciente = cbx_pacientes.getSelectedItem().toString();
-    String pacientePartes[]=nombrePaciente.split(" ");
-    String cedula =pacientePartes[0];
+    String pacientePartes[] = nombrePaciente.split(" ");
+    String cedula = pacientePartes[0];
     PacienteModelo pm = pc.obtenerCedula(cedula);
-    //medico
+
+    // Medico
     String nombreMedico = cbx_medico.getSelectedItem().toString();
-    String MedicoPartes[]=nombreMedico.split(" ");
+    String MedicoPartes[] = nombreMedico.split(" ");
     String cedula_m = MedicoPartes[0];
     MedicoModelo mm = mc.obtenerCedula(cedula_m);
-    //especialidad
+
+    // Especialidad
     EspecialidadModelo em = mm.getEspecialidadModelo();
-    CitaModelo cm =cc.guardar(pm, mm, em, txt_descripcion.getText(), txt_fecha.getText(), txt_hora.getText());
-    
-    JOptionPane.showMessageDialog(this, "Cita ingresada para el día "+ cm.getFecha()+ " para las "+cm.getHora()+ " con el medico "+cm.getMm().getNombres()+ " y la especialidad "+ cm.getEm().getNombre());
-            
-    
+    CitaModelo cm = cc.guardar(pm, mm, em, txt_descripcion.getText(), txt_fecha.getText(), txt_hora.getText());
+
+    JOptionPane.showMessageDialog(this, "Cita ingresada para el día " + cm.getFecha() + " para las " + cm.getHora() + " con el medico " + cm.getMm().getNombres() + " y la especialidad " + cm.getEm().getNombre());
+
+    // Limpiar campos
     cbx_pacientes.setSelectedIndex(0);
     cbx_especialidades.setSelectedIndex(0);
     cbx_medico.setSelectedIndex(0);
     txt_descripcion.setText("");
     txt_fecha.setText("");
     txt_hora.setText("");
+}
+
+// Validar fecha en formato dd/mm/aa
+private boolean validarFecha(String fecha) {
+    SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yy");
+    formatoFecha.setLenient(false); // No permitir fechas inválidas como el 30 de febrero
+    try {
+        formatoFecha.parse(fecha); // Intentar parsear la fecha
+        return true;
+    } catch (ParseException e) {
+        return false;
+    }
+}
+
+// Validar hora en formato hh:mm
+private boolean validarHora(String hora) {
+    String regex = "^([01]?[0-9]|2[0-3]):([0-5]?[0-9])$"; // Expresión regular para validar hh:mm
+    return hora.matches(regex);
+
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_guardarActionPerformed
 

@@ -4,8 +4,15 @@
  */
 package vista.medicos;
 
+import controlador.EspecialidadControlador;
 import controlador.MedicoControlador;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import modelo.EspecialidadModelo;
 import modelo.MedicoModelo;
 
 /**
@@ -13,31 +20,65 @@ import modelo.MedicoModelo;
  * @author rb940
  */
 public class Listado extends javax.swing.JInternalFrame {
+    
     public DefaultTableModel tableModel = new DefaultTableModel();
     public MedicoControlador mc = MedicoControlador.getInstancia();
+    public EspecialidadControlador ec = EspecialidadControlador.getInstancia();
+    private TableRowSorter<DefaultTableModel> sorter;
+
 
     /**
      * Creates new form Listado
      */
     public Listado() {
         initComponents();
-        
         tbl_listado.setModel(tableModel);
-        String columnas[]={"CEDULA", "NOMBRES", "EDAD", "sexo", "ESPECIALIDAD"};
-        tableModel.addColumn(columnas[0]);
-        tableModel.addColumn(columnas[1]);
-        tableModel.addColumn(columnas[2]);
-        tableModel.addColumn(columnas[3]);
-        tableModel.addColumn(columnas[4]);
+        String columnas[] = {"CEDULA", "NOMBRES", "EDAD", "SEXO", "ESPECIALIDAD"};
+        tableModel.setColumnIdentifiers(columnas);
         
         cargarListadoMedicos();
+        sorter = new TableRowSorter<>(tableModel);
+         tbl_listado.setRowSorter(sorter);
+
+        // Agregar un DocumentListener al campo de búsqueda para hacer la búsqueda en tiempo real
+        txt_buscarPorCedula.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrarPorCedula();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrarPorCedula();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filtrarPorCedula();
+            }
+        });
     }
-    private void cargarListadoMedicos(){
-    for (MedicoModelo mm : mc.listadoCompleto()) {
-            Object[] fila = {mm.getCedula(), mm.getNombres(), mm.getEdad(), mm.getSexo(), mm.GetEspecialidadmodelo()};
+
+    private void cargarListadoMedicos() {
+        // Limpiar la tabla antes de agregar los médicos
+        tableModel.setRowCount(0);
+        for (MedicoModelo mm : mc.listadoCompleto()) {
+            String sexo = mm.isSexo() ? "Hombre" : "Mujer"; // Convertir el booleano a String
+            String especialidad = mm.GetEspecialidadmodelo();
+            Object[] fila = {mm.getCedula(), mm.getNombres(), mm.getEdad(), sexo, especialidad};
             tableModel.addRow(fila);
         }
-     }
+    }
+    private void filtrarPorCedula() {
+        String filtro = txt_buscarPorCedula.getText().trim();
+        if (filtro.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("^" + filtro, 0)); // Filtra por coincidencia en la columna 0 (CÉDULA)
+        }
+    }
+
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,6 +94,10 @@ public class Listado extends javax.swing.JInternalFrame {
         txt_buscarPorCedula = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_listado = new javax.swing.JTable();
+        btn_editar = new javax.swing.JButton();
+        btn_eliminar = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(102, 153, 255));
 
         jLabel1.setText("Listado de Personas");
 
@@ -77,6 +122,20 @@ public class Listado extends javax.swing.JInternalFrame {
         ));
         jScrollPane1.setViewportView(tbl_listado);
 
+        btn_editar.setText("Editar");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
+
+        btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -85,10 +144,17 @@ public class Listado extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(15, 15, 15)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btn_eliminar)
+                                    .addComponent(btn_editar))
+                                .addGap(9, 9, 9))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(136, 136, 136)
                         .addComponent(jLabel1)))
@@ -98,13 +164,17 @@ public class Listado extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(btn_editar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_eliminar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 21, Short.MAX_VALUE))
+                .addGap(0, 19, Short.MAX_VALUE))
         );
 
         pack();
@@ -116,9 +186,89 @@ public class Listado extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
        // TODO add your handling code here:
     }//GEN-LAST:event_txt_buscarPorCedulaActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+    int row = tbl_listado.getSelectedRow();
+        if (row != -1) { // Verificar que se haya seleccionado una fila
+            String cedula = (String) tbl_listado.getValueAt(row, 0);
+            MedicoModelo medico = mc.obtenerCedula(cedula);
+
+            if (medico != null) {
+                // Abrir una ventana de edición con los datos del médico
+                // Para simplificar, mostraré un ejemplo en el que puedes hacer esto con un JOptionPane
+                String nuevoNombre = JOptionPane.showInputDialog(this, "Nuevo nombre:", medico.getNombres());
+                String nuevaEdadStr = JOptionPane.showInputDialog(this, "Nueva edad:", medico.getEdad());
+                int nuevaEdad = Integer.parseInt(nuevaEdadStr);
+                String nuevoSexo = (String) JOptionPane.showInputDialog(this, "Nuevo sexo:", medico.isSexo() ? "Hombre" : "Mujer",
+                        JOptionPane.PLAIN_MESSAGE, null, new String[]{"Hombre", "Mujer"}, medico.isSexo() ? "Hombre" : "Mujer");
+
+               
+
+                // Actualizar médico
+                java.util.List<EspecialidadModelo> especialidades = ec.listado();
+            String[] especialidadesArray = new String[especialidades.size()];
+            
+            // Llenar el arreglo con los nombres de las especialidades
+            for (int i = 0; i < especialidades.size(); i++) {
+                especialidadesArray[i] = especialidades.get(i).getNombre();
+            }
+            
+            // Mostrar un JOptionPane con las especialidades guardadas
+            String especialidadSeleccionada = (String) JOptionPane.showInputDialog(this, 
+                    "Seleccione la especialidad:", 
+                    "Editar especialidad", 
+                    JOptionPane.PLAIN_MESSAGE, 
+                    null, 
+                    especialidadesArray, 
+                    medico.GetEspecialidadmodelo());  // Mostrar la especialidad actual como predeterminada
+
+            if (especialidadSeleccionada != null) {
+                // Buscar la especialidad seleccionada en la lista
+                EspecialidadModelo especialidadModelo = ec.obtenerPorNombre(especialidadSeleccionada);
+
+                // Actualizar el médico con los nuevos datos
+                medico.setNombres(nuevoNombre);
+                medico.setEdad(nuevaEdad);
+                medico.setSexo(nuevoSexo.equals("Hombre"));
+                medico.setEspecialidadModelo(especialidadModelo);
+
+                // Actualizar la tabla
+                cargarListadoMedicos();
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar un médico para editar.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+  
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+    int row = tbl_listado.getSelectedRow();
+        if (row != -1) { // Verificar que se haya seleccionado una fila
+            String cedula = (String) tbl_listado.getValueAt(row, 0);
+            MedicoModelo medico = mc.obtenerCedula(cedula);
+
+            if (medico != null) {
+                int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar este médico?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Eliminar médico
+                    mc.eliminarMedico(medico);
+
+                    // Actualizar la tabla
+                    cargarListadoMedicos();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un médico para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_eliminarActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_editar;
+    private javax.swing.JButton btn_eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

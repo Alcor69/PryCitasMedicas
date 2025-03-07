@@ -38,6 +38,8 @@ public class IngresarEspecialidad extends javax.swing.JInternalFrame {
         btn_guardar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 204));
+
         jLabel1.setText("Ingrese el nombre de la Especialidad");
 
         btn_guardar.setText("Guardar");
@@ -84,9 +86,26 @@ public class IngresarEspecialidad extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarActionPerformed
-    EspecialidadModelo em = especialidadControlador.guardar(txt_nombre.getText());
-    
-    JOptionPane.showMessageDialog(null,txt_nombre.getText()+ "INGRESADO EXITOSAMENTE");
+    String nombreEspecialidad = txt_nombre.getText().trim();
+
+    // Verificamos si el nombre de la especialidad está vacío
+    if (nombreEspecialidad.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor ingrese el nombre de la especialidad.");
+        return;
+    }
+
+    // Llamamos a un método del controlador que verifica si ya existe la especialidad con ese nombre
+    if (especialidadControlador.existeEspecialidad(nombreEspecialidad)) {
+        JOptionPane.showMessageDialog(null, "Ya existe una especialidad con ese nombre. Ingrese otro nombre.");
+        return;
+    }
+
+    // Si no existe, guardamos la nueva especialidad
+    EspecialidadModelo em = especialidadControlador.guardar(nombreEspecialidad);
+
+    JOptionPane.showMessageDialog(null, nombreEspecialidad + " INGRESADO EXITOSAMENTE");
+
+    // Limpiamos el campo de texto
     txt_nombre.setText("");
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_guardarActionPerformed

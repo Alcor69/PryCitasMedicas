@@ -46,6 +46,8 @@ public class Ingresar extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         cbx_especialidades = new javax.swing.JComboBox<>();
 
+        setBackground(new java.awt.Color(102, 153, 255));
+
         jLabel1.setText("Cedula");
 
         jLabel2.setText("Nombres y Apellidos");
@@ -137,6 +139,7 @@ public class Ingresar extends javax.swing.JInternalFrame {
     String edadStr = txt_edad.getText();
     String nombreEspecialidad = cbx_especialidades.getSelectedItem().toString();
     
+    // Validar si los campos están vacíos
     if (cedula.isEmpty() || nombre.isEmpty() || edadStr.isEmpty() || nombreEspecialidad.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Todos los campos deben ser completados.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
@@ -150,17 +153,29 @@ public class Ingresar extends javax.swing.JInternalFrame {
         JOptionPane.showMessageDialog(this, "Por favor, ingrese una edad válida.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
+    
+    // Validar si la cédula ya está registrada
+    MedicoControlador mc = MedicoControlador.getInstancia();
+    if (mc.obtenerCedula(cedula) != null) {
+        JOptionPane.showMessageDialog(this, "La cédula ya está registrada. Por favor, ingrese una cédula válida.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Verificar el sexo seleccionado
     boolean sexo = cbx_sexo.getSelectedItem().toString().equals("Hombre");
 
+    // Obtener la especialidad
     EspecialidadModelo em_nombre = ec.obtenerPorNombre(nombreEspecialidad);
 
     if (em_nombre == null) {
         JOptionPane.showMessageDialog(this, "La especialidad seleccionada no es válida.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
-    MedicoControlador mc = MedicoControlador.getInstancia();
+
+    // Guardar el médico
     MedicoModelo mm = mc.guardar(em_nombre, cedula, nombre, edad, sexo);
 
+    // Confirmación de éxito
     JOptionPane.showMessageDialog(this, mm.getNombres() + " ingresado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
     // Limpiar campos

@@ -5,7 +5,12 @@
 package vista.Especialidades;
 
 import controlador.EspecialidadControlador;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import modelo.EspecialidadModelo;
 
 
@@ -20,22 +25,58 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
      */
    EspecialidadControlador ec = EspecialidadControlador.getInstancia();
    DefaultTableModel tableModel = new DefaultTableModel();
-  
+   TableRowSorter<DefaultTableModel> sorter;
 
     public ListadoEspecialidades() {
         initComponents();
         
-        tbl_Listado.setModel(tableModel);
+         tbl_Listado.setModel(tableModel);
         
         String columnas[] = {"ESPECIALIDADES"};
         tableModel.setColumnIdentifiers(columnas);
         
-        cargarListadoPacientes();
+        cargarListadoEspecialidades();
+
+        // Configurar el sorter para filtrar la tabla
+        sorter = new TableRowSorter<>(tableModel);
+        tbl_Listado.setRowSorter(sorter);
+
+        // Agregar un listener al campo de texto para filtrar en tiempo real
+        txt_nombre.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrarEspecialidades();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrarEspecialidades();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filtrarEspecialidades();
+            }
+        });
     }
-    private void cargarListadoPacientes(){
-    for (EspecialidadModelo em : ec.listado()){
+
+    private void cargarListadoEspecialidades() {
+        // Limpiamos la tabla antes de cargar los datos
+        tableModel.setRowCount(0);
+
+        // Cargamos todas las especialidades en la tabla
+        for (EspecialidadModelo em : ec.listado()) {
             Object[] fila = {em.getNombre()};
             tableModel.addRow(fila);
+        }
+    }
+
+    private void filtrarEspecialidades() {
+        String filtro = txt_nombre.getText().trim();
+        if (filtro.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + filtro)); // Filtrado sin distinción entre mayúsculas y minúsculas
         }
     }
 
@@ -57,6 +98,7 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
         txt_nombre = new javax.swing.JTextField();
         tbl_listado = new javax.swing.JScrollPane();
         tbl_Listado = new javax.swing.JTable();
+        btn_eliminar = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -71,9 +113,18 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
         ));
         jScrollPane3.setViewportView(jTable1);
 
+        setBackground(new java.awt.Color(255, 255, 204));
+
         jLabel1.setText("Listado de Especialistas");
 
         jLabel2.setText("Buscar por Nombre");
+
+        txt_nombre.setBackground(new java.awt.Color(242, 242, 242));
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
 
         tbl_Listado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -87,6 +138,13 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
             }
         ));
         tbl_listado.setViewportView(tbl_Listado);
+
+        btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -105,8 +163,10 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_eliminar)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,17 +175,48 @@ public class ListadoEspecialidades extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_eliminar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tbl_listado, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+    int selectedRow = tbl_Listado.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione una especialidad para eliminar.");
+            return;
+        }
+
+        // Obtener el nombre de la especialidad de la fila seleccionada
+        String nombreEspecialidad = tableModel.getValueAt(selectedRow, 0).toString();
+
+        // Eliminar la especialidad utilizando el controlador
+        boolean eliminado = ec.eliminarEspecialidad(nombreEspecialidad);
+
+        if (eliminado) {
+            JOptionPane.showMessageDialog(this, nombreEspecialidad + " eliminada exitosamente.");
+            cargarListadoEspecialidades(); // Recargar el listado de especialidades
+        } else {
+            JOptionPane.showMessageDialog(this, "No se pudo eliminar la especialidad.");
+        }
+    
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane3;

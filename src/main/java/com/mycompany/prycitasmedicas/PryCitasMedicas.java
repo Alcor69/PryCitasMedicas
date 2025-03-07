@@ -21,7 +21,7 @@ public class PryCitasMedicas {
         pc.guardarDatos("1754148961", "Dario ", 19, true);
         pc.guardarDatos("1852456256", "Jonathan", 18, true);
         pc.guardarDatos("17547855251", "Elian ", 19, true);
-        pc.guardarDatos("18524955456", "Jonathan ", 19, true);
+        pc.guardarDatos("18524955456", "Daniela ", 19, false);
         
         EspecialidadControlador ec = EspecialidadControlador.getInstancia();
         EspecialidadModelo em1 = ec.guardar("Medicina ");

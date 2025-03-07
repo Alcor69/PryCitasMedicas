@@ -5,6 +5,7 @@
 package vista.pacientes;
 
 import controlador.PacienteControlador;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.PacienteModelo;
 
@@ -28,11 +29,14 @@ public class Listado extends javax.swing.JInternalFrame {
         
         cargarListadoPacientes();
     }
-     private void cargarListadoPacientes(){
-    for (PacienteModelo pm : pc.listadoCompleto()) {
+    private void cargarListadoPacientes(){
+        // Limpiar la tabla antes de agregar los pacientes
+        tableModel.setRowCount(0);
+        for (PacienteModelo pm : pc.listadoCompleto()) {
             Object[] fila = {pm.getCedula(), pm.getNombres(), pm.getEdad(), pm.getSexo()};
             tableModel.addRow(fila);
-        }}
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -48,6 +52,10 @@ public class Listado extends javax.swing.JInternalFrame {
         txt_buscarPorCedula = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_listado = new javax.swing.JTable();
+        bttn_editar = new javax.swing.JButton();
+        bttn_eliminar = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(255, 204, 204));
 
         jLabel1.setText("Listado de Personas");
 
@@ -72,6 +80,20 @@ public class Listado extends javax.swing.JInternalFrame {
         ));
         jScrollPane1.setViewportView(tbl_listado);
 
+        bttn_editar.setText("Editar");
+        bttn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttn_editarActionPerformed(evt);
+            }
+        });
+
+        bttn_eliminar.setText("Eliminar");
+        bttn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttn_eliminarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -80,10 +102,17 @@ public class Listado extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(15, 15, 15)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bttn_eliminar)
+                                    .addComponent(bttn_editar))
+                                .addGap(12, 12, 12))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(136, 136, 136)
                         .addComponent(jLabel1)))
@@ -93,13 +122,17 @@ public class Listado extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(bttn_editar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_buscarPorCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bttn_eliminar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 21, Short.MAX_VALUE))
+                .addGap(0, 19, Short.MAX_VALUE))
         );
 
         pack();
@@ -120,9 +153,62 @@ public class Listado extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
        // TODO add your handling code here:
     }//GEN-LAST:event_txt_buscarPorCedulaActionPerformed
+
+    private void bttn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_eliminarActionPerformed
+    int row = tbl_listado.getSelectedRow();
+        if (row != -1) { // Verificar que se haya seleccionado una fila
+            String cedula = (String) tbl_listado.getValueAt(row, 0);
+            PacienteModelo paciente = pc.buscarPacientePorCedula(cedula);
+
+            if (paciente != null) {
+                int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar este paciente?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Eliminar paciente
+                    pc.eliminarPacientePorCedula(cedula);
+
+                    // Actualizar la tabla
+                    cargarListadoPacientes();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un paciente para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bttn_eliminarActionPerformed
+
+    private void bttn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_editarActionPerformed
+    int row = tbl_listado.getSelectedRow();
+        if (row != -1) { // Verificar que se haya seleccionado una fila
+            String cedula = (String) tbl_listado.getValueAt(row, 0);
+            PacienteModelo paciente = pc.buscarPacientePorCedula(cedula);
+
+            if (paciente != null) {
+                // Abrir una ventana de edición con los datos del paciente
+                // Para simplificar, mostraré un ejemplo en el que puedes hacer esto con un JOptionPane
+                String nuevoNombre = JOptionPane.showInputDialog(this, "Nuevo nombre:", paciente.getNombres());
+                String nuevaEdadStr = JOptionPane.showInputDialog(this, "Nueva edad:", paciente.getEdad());
+                int nuevaEdad = Integer.parseInt(nuevaEdadStr);
+                String nuevoSexo = (String) JOptionPane.showInputDialog(this, "Nuevo sexo:", paciente.getSexo(),
+                        JOptionPane.PLAIN_MESSAGE, null, new String[]{"Hombre", "Mujer"}, paciente.getSexo());
+
+                // Actualizar paciente
+                paciente.setNombres(nuevoNombre);
+                paciente.setEdad(nuevaEdad);
+                paciente.setSexo(nuevoSexo.equals("Hombre")); // Ajustamos el valor de sexo en booleano
+
+                // Actualizar la tabla
+                cargarListadoPacientes();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un paciente para editar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bttn_editarActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bttn_editar;
+    private javax.swing.JButton bttn_eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

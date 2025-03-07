@@ -61,6 +61,16 @@ public class Listado extends javax.swing.JInternalFrame {
 
         ArrayList<CitaModelo> citasFiltradas = CitaControlador.getInstancia().filtrarCitas(estado, paciente, especialidad, medico, fecha);
         actualizarTabla(citasFiltradas);
+        
+        if (!paciente.equals("Todos") && citasFiltradas.stream().noneMatch(c -> c.getPm().getCedula().equals(paciente.split(" ")[0]))) {
+        JOptionPane.showMessageDialog(this, "No existen citas con estos datos ", "Información", JOptionPane.INFORMATION_MESSAGE);
+    }
+        if (!medico.equals("Todos") && citasFiltradas.stream().noneMatch(c -> c.getMm().getCedula().equals(medico.split(" ")[0]))) {
+        JOptionPane.showMessageDialog(this, "No existen citas con estos datos", "Información", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    actualizarTabla(citasFiltradas);
     }
 
     private void actualizarTabla(ArrayList<CitaModelo> citas) {
@@ -72,7 +82,7 @@ public class Listado extends javax.swing.JInternalFrame {
             String estado = cita.getEstado();
 
             // Si el estado es nulo o vacío, mostrar "No Atendido"
-            if (estado == null || estado.isEmpty()) {
+            if (estado == cita.getHora() || estado.isEmpty()) {
                 estado = "No Atendido";
             }
 
@@ -168,7 +178,6 @@ public class Listado extends javax.swing.JInternalFrame {
             CitaModelo cita = CitaControlador.getInstancia().obtenerCita(cedulaPaciente, fecha, hora);
             
             if (cita != null) {
-                // Cambiar el estado de la cita
                 String nuevoEstado = cita.getEstado().equals("Atendido") ? "No Atendido" : "Atendido";
                 cita.setEstado(nuevoEstado);
 
@@ -223,6 +232,8 @@ public class Listado extends javax.swing.JInternalFrame {
             }
         ));
         jScrollPane2.setViewportView(jTable2);
+
+        setBackground(new java.awt.Color(204, 204, 255));
 
         jLabel1.setText("Listado de Citas");
 

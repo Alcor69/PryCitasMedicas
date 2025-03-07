@@ -19,7 +19,27 @@ public class Ingresar extends javax.swing.JInternalFrame {
      */
     public Ingresar() {
         initComponents();
+        txt_edad.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            txt_edadKeyTyped(evt);
+        }
+    });
     }
+    private void txt_edadKeyTyped(java.awt.event.KeyEvent evt) {                                  
+    char c = evt.getKeyChar();
+    
+    // Verificar si el carácter ingresado no es un número (0-9)
+    if (!Character.isDigit(c)) {
+        // Mostrar un mensaje de advertencia si el usuario ingresa una letra
+        JOptionPane.showMessageDialog(this, "Solo se pueden ingresar números en el campo de edad.", 
+                                      "Advertencia", JOptionPane.WARNING_MESSAGE);
+        
+        // Si se desea, se puede eliminar el carácter no válido (comentado si no lo deseas)
+        // evt.consume();
+    }
+
+}
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,6 +59,8 @@ public class Ingresar extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         cbx_sexo = new javax.swing.JComboBox<>();
         bttn_guardar = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(255, 204, 204));
 
         jLabel1.setText("Cedula");
 
@@ -117,13 +139,37 @@ public class Ingresar extends javax.swing.JInternalFrame {
     private void bttn_guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_guardarActionPerformed
     String cedula = txt_cedula.getText();
     String nombre = txt_Nombres.getText();
-    int edad = Integer.parseInt(txt_edad.getText());
+    String edadStr = txt_edad.getText();
     boolean sexo = cbx_sexo.getSelectedItem().toString().equals("Hombre");
+    
+    // Validar si la edad ingresada es un número
+    int edad = 0;
+    try {
+        edad = Integer.parseInt(edadStr); // Intentamos convertir la edad a un número entero
+    } catch (NumberFormatException e) {
+        // Si ocurre un error, mostramos un mensaje de error
+        JOptionPane.showMessageDialog(this, "La edad debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        return; // Detener la acción
+    }
+
+    // Verificar si ya existe un paciente con la misma cédula
     PacienteControlador pacienteControlador = PacienteControlador.getInstancia();
     
-    PacienteModelo pm = pacienteControlador.guardarDatos(cedula, nombre, edad, sexo);
+    if (pacienteControlador.existePacientePorCedula(cedula)) {
+        // Si la cédula ya está registrada, mostramos un mensaje de error
+        JOptionPane.showMessageDialog(this, "El número de cédula ya está registrado.", "Error", JOptionPane.ERROR_MESSAGE);
+    } else {
+        // Si no existe, guardamos los datos del paciente
+        PacienteModelo pm = pacienteControlador.guardarDatos(cedula, nombre, edad, sexo);
+        JOptionPane.showMessageDialog(this, pm.getNombres() + " INGRESADO EXITOSAMENTE");
+
+        // Limpiar las casillas de texto después de guardar los datos
+        txt_cedula.setText("");
+        txt_Nombres.setText("");
+        txt_edad.setText("");
+        cbx_sexo.setSelectedIndex(0); // Restablecer el combo box a "Hombre"
+    }
     
-    JOptionPane.showMessageDialog(this, pm.getNombres()+ "INGRESADO EXITOSAMENTE");    
     }//GEN-LAST:event_bttn_guardarActionPerformed
 
 

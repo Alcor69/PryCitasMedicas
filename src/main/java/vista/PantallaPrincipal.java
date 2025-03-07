@@ -55,6 +55,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        contenedor_principal.setBackground(new java.awt.Color(204, 255, 255));
+        contenedor_principal.setForeground(new java.awt.Color(102, 102, 255));
+
         javax.swing.GroupLayout contenedor_principalLayout = new javax.swing.GroupLayout(contenedor_principal);
         contenedor_principal.setLayout(contenedor_principalLayout);
         contenedor_principalLayout.setHorizontalGroup(

@@ -47,6 +47,32 @@ public class EspecialidadControlador {
             
         }return null;
     }
-
+     public boolean existeEspecialidad(String nombre) {
+        for (EspecialidadModelo em : especialidadModelos) {
+            if (em.getNombre().equalsIgnoreCase(nombre)) {
+                return true; // Ya existe una especialidad con ese nombre
+            }
+        }
+        return false; // No existe
+    }
+     public boolean eliminarEspecialidad(String nombre) {
+    EspecialidadModelo especialidadAEliminar = null;
+    
+    // Buscar la especialidad en la lista
+    for (EspecialidadModelo em : especialidadModelos) {
+        if (em.getNombre().equalsIgnoreCase(nombre)) {
+            especialidadAEliminar = em;
+            break;
+        }
+    }
+    
+    // Si encontramos la especialidad, la eliminamos
+    if (especialidadAEliminar != null) {
+        especialidadModelos.remove(especialidadAEliminar);
+        return true;
+    }
+    
+    return false; // No se encontró la especialidad
+}
 
 }

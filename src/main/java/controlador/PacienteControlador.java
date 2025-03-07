@@ -34,9 +34,10 @@ public class PacienteControlador {
     public PacienteModelo guardarDatos(String cedula, String nombre, int edad, boolean sexo){
         PacienteModelo modeloPaciente = new PacienteModelo(cedula, nombre, edad, sexo);
         pacienteModelosLista.add(modeloPaciente);
-        return modeloPaciente;
+        return modeloPaciente;  
         
     }
+    
     
     public ArrayList<PacienteModelo>listadoCompleto(){
     return pacienteModelosLista;
@@ -89,4 +90,9 @@ public class PacienteControlador {
         }
         return null;
     }
+    public boolean existePacientePorCedula(String cedula) {
+    return buscarPacientePorCedula(cedula) != null; // Si retorna null, no existe, sino que sí
+}
+
+    
 }
